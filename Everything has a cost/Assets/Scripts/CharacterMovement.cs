@@ -21,7 +21,7 @@ public class CharacterMovement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
 	}
 
-	void Update ()
+	void FixedUpdate ()
     {
         rb.velocity = new Vector2 (moveSpeed * Input.GetAxisRaw("Horizontal"), 0);
     }
