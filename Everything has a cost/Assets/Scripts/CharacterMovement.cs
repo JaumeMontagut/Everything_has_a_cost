@@ -2,15 +2,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterMovement : MonoBehaviour {
+public class CharacterMovement : MonoBehaviour
+{
+    //Movement
+    public float moveSpeed = 100000;
+    public float jumpHeight = 10;
+    private float axisValue;
+    private Rigidbody2D rb;
+    //Animation & feathers
+    private bool movingLeft = false;
+    private bool movingRight = false;
+    private bool jumping = false;
 
-	// Use this for initialization
-	void Start () {
-		
+	void Start ()
+    {
+        rb = GetComponent<Rigidbody2D>();
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+
+	void Update ()
+    {
+        //IMPLEMENTATION 1
+        //if (Input.GetAxisRaw("Horizontal") != 0)
+        //{
+        //    transform.position.x += moveSpeed * Input.GetAxisRaw("Horizontal");
+        //    if (Input.GetAxisRaw("Horizontal") > 0)
+        //    {
+        //        movingRight = true;//Millor fer un bool i fer que el anim canvii si esta a > o < que 0
+        //    }
+        //    else
+        //    {
+        //        movingLeft = true;
+        //    }
+        //}
 	}
 }
