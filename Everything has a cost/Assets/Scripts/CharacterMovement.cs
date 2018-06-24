@@ -34,5 +34,8 @@ public class CharacterMovement : MonoBehaviour
         //        movingLeft = true;
         //    }
         //}
-	}
+
+        //IMPLEMENTATION 2
+        //rb.AddForce(new Vector2(Input.GetAxisRaw("Horizontal") * moveSpeed, 0));
+    }
 }
