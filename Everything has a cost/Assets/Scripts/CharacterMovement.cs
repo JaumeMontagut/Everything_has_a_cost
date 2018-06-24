@@ -5,7 +5,7 @@ using UnityEngine;
 public class CharacterMovement : MonoBehaviour
 {
     //Movement
-    public float moveSpeed = 100000;
+    public float moveSpeed = 200;
     public float jumpHeight = 10;
     private float axisValue;
     private Rigidbody2D rb;
@@ -23,8 +23,6 @@ public class CharacterMovement : MonoBehaviour
 
 	void Update ()
     {
-        movementVec = new Vector2(Input.GetAxisRaw("Horizontal") * moveSpeed * Time.deltaTime, 0);//Add jump in here or not?
-        transformVec = new Vector2(transform.position.x, transform.position.y);
-        rb.MovePosition(transformVec + movementVec);
+        rb.velocity = new Vector2 (moveSpeed * Input.GetAxisRaw("Horizontal"), 0);
     }
 }
