@@ -7,10 +7,7 @@ public class CharacterMovement : MonoBehaviour
     //Movement
     public float moveSpeed = 200;
     public float jumpVelocity = 10;
-    private float axisValue;
     private Rigidbody2D rb;
-    private Vector2 movementVec;
-    private Vector2 transformVec;
     public LayerMask Jumpable;
     //Animation & feathers
     private bool movingLeft = false;
@@ -44,14 +41,13 @@ public class CharacterMovement : MonoBehaviour
 
     bool IsGrounded()
     {
-        Vector2 transform2D = Transform2D();
-
         Debug.DrawLine(
             transform.position,
-            new Vector3(transform.position.x, transform.position.y - groundedDist, transform.position.z),
+            transform.position - new Vector3 (0, - groundedDist, 0),
             Color.red,
             0.5f);
 
+        Vector2 transform2D = Transform2D();
         return Physics2D.Linecast(
             transform2D,
             transform2D + new Vector2 (0, -groundedDist),
