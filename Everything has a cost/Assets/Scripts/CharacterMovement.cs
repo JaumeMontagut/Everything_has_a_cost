@@ -9,6 +9,8 @@ public class CharacterMovement : MonoBehaviour
     public float jumpHeight = 10;
     private float axisValue;
     private Rigidbody2D rb;
+    private Vector2 movementVec;
+    private Vector2 transformVec;
     //Animation & feathers
     private bool movingLeft = false;
     private bool movingRight = false;
@@ -21,21 +23,8 @@ public class CharacterMovement : MonoBehaviour
 
 	void Update ()
     {
-        //IMPLEMENTATION 1
-        //if (Input.GetAxisRaw("Horizontal") != 0)
-        //{
-        //    transform.position.x += moveSpeed * Input.GetAxisRaw("Horizontal");
-        //    if (Input.GetAxisRaw("Horizontal") > 0)
-        //    {
-        //        movingRight = true;//Millor fer un bool i fer que el anim canvii si esta a > o < que 0
-        //    }
-        //    else
-        //    {
-        //        movingLeft = true;
-        //    }
-        //}
-
-        //IMPLEMENTATION 2
-        //rb.AddForce(new Vector2(Input.GetAxisRaw("Horizontal") * moveSpeed, 0));
+        movementVec = new Vector2(Input.GetAxisRaw("Horizontal") * moveSpeed * Time.deltaTime, 0);//Add jump in here or not?
+        transformVec = new Vector2(transform.position.x, transform.position.y);
+        rb.MovePosition(transformVec + movementVec);
     }
 }
