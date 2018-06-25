@@ -15,36 +15,61 @@ public class FeatherController : MonoBehaviour {
     public GameObject[] feathers;
 
     private FeatherState[] feathersState;
-    private int featherRows = 10;
-    private int[] feathersInEachRow;
-    private float radius = 10;//radius changes =/
-    private float maxAngle;//A fixed angle value (where the body of the bird starts)
+    private int featherRows = 6;
+    private int[] feathersInEachRow = new int[6];//6 = featherRows
+    private float radius;
+    private float maxAngle = 150 * Mathf.PI / 180;//The angle at which the body of the bird starts
 
     //Control both wings on the same script
+    private int featherNum;
+    private float currentAngle;
+    private float featherSeparation;
+    private float endAngle;
+    private float startAngle;
 
-
-
-	void Start () {
-
-	}
+    void Start ()
+    {
+        feathersInEachRow[0] =  3;
+        feathersInEachRow[1] =  5;
+        feathersInEachRow[2] =  7;
+        feathersInEachRow[3] =  9;
+        feathersInEachRow[4] = 11;
+        feathersInEachRow[5] = 13;//35 feathers on each wing, 70 total
+    }
 
 	void Update () {
 
-        int featherNum = 0;
-        float currentAngle = LWing.transform.rotation.z;
+        featherNum = 0;
+        radius = 0.25f;
+        currentAngle = LWing.transform.rotation.z * Mathf.PI / 180;
 
-        for (int i = 0; i < featherRows; ++i)
-        {
-            float featherSeparation = (maxAngle - currentAngle) / feathersInEachRow[i];
+        //Set the start and end angle
+        if (currentAngle < maxAngle) {
+            startAngle = currentAngle;
+            endAngle = maxAngle;
+        }
+        else {
+            startAngle = maxAngle;
+            endAngle = currentAngle;
+        }
 
-            for (int j = 0; j < feathersInEachRow[i]; ++j)
+        //Position the feathers on the left wing
+        for (int row = 0; row < featherRows; ++row){
+            featherSeparation = (endAngle - startAngle) / (feathersInEachRow[row] + 1);
+
+            for (int rowFeather = 0; rowFeather < feathersInEachRow[row]; ++rowFeather)
             {
-                feathers[featherNum].transform.position = new Vector3(
-                        radius * Mathf.Cos(currentAngle + featherSeparation * j),
-                        radius * Mathf.Sin(currentAngle + featherSeparation * j),
+                if (feathers[featherNum].activeSelf == true)
+                {
+
+                    feathers[featherNum].transform.position = new Vector3(
+                        radius * Mathf.Cos(Mathf.PI + featherSeparation * (rowFeather + 1)) + LWing.transform.position.x,//Mathf.PI = We need to invert the rotation (probably because Anima 2D is messing with the transforms)
+                        radius * Mathf.Sin(Mathf.PI + featherSeparation * (rowFeather + 1)) + LWing.transform.position.y,
                         feathers[featherNum].transform.position.z);
+                }
                 ++featherNum;
             }
+            radius += 0.25f;
         }
 
         //foreach (GameObject f in feathers)
@@ -53,3 +78,5 @@ public class FeatherController : MonoBehaviour {
         //}
 	}
 }
+
+//When picking up it checks rows from each wing first
