@@ -13,6 +13,7 @@ public class CharacterMovement : MonoBehaviour
     private Animator anim;
     bool grounded = true;
     private FeatherController featherCtr;
+    bool jumpRequest = false;
 
     void Start()
     {
@@ -21,12 +22,25 @@ public class CharacterMovement : MonoBehaviour
         featherCtr = GetComponent<FeatherController>();
     }
 
+    void Update()
+    {
+        JumpInput();
+    }
+
     void FixedUpdate()
     {
         Move();
         Jump();
 
         CheckGrounded();
+    }
+
+    void JumpInput()
+    {
+        if (Input.GetButtonDown("Jump") && featherCtr.activeFeathers > 0)
+        {
+            jumpRequest = true;
+        }
     }
 
     void Move()
@@ -55,13 +69,14 @@ public class CharacterMovement : MonoBehaviour
 
     void Jump()
     {
-        if (Input.GetButtonDown("Jump") && featherCtr.activeFeathers > 0)
+        if (jumpRequest)
         {
             //rb.velocity += new Vector2(0, jumpVelocity);
             rb.AddForce(new Vector2(Input.GetAxis("Horizontal") * jumpVelocity, Input.GetAxis("Vertical") * jumpVelocity) , ForceMode2D.Impulse);
             anim.SetTrigger("Wingbeat");
             featherCtr.activeFeathers--;
             featherCtr.ChangeFeatherText();
+            jumpRequest = false;
         }
     }
 
