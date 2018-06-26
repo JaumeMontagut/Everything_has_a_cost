@@ -7,13 +7,17 @@ public class CharacterMovement : MonoBehaviour
     //Movement
     public float moveSpeed = 200;
     public float jumpVelocity = 10;
-    private Rigidbody2D rb;
     public LayerMask Jumpable;
+    public GameObject attackFeather;
+    public UIManager uiManager;
+
+    private bool alive = true;
+    private Rigidbody2D rb;
     private float groundedDist = 1;
     private Animator anim;
-    bool grounded = true;
+    private bool grounded = true;
     private FeatherController featherCtr;
-    bool wingbeatRequest = false;
+    private bool wingbeatRequest = false;
 
     private float lowGrav = 0.25f;
     private float normalGrav = 1.0f;
@@ -38,7 +42,7 @@ public class CharacterMovement : MonoBehaviour
 
     void JumpInput()
     {
-        if (Input.GetButtonDown("Jump") && featherCtr.activeFeathers > 0)
+        if (Input.GetButtonDown("Jump") && alive)
         {
             wingbeatRequest = true;
         }
@@ -46,14 +50,33 @@ public class CharacterMovement : MonoBehaviour
 
     void Wingbeat()
     {
+        Debug.Log("Alive: " + alive);
         if (wingbeatRequest)
         {
-            //Reset velocity
-            //rb.velocity = Vector2.zero;
-            rb.AddForce(new Vector2(Input.GetAxisRaw("Horizontal") * jumpVelocity, Input.GetAxisRaw("Vertical") * jumpVelocity) , ForceMode2D.Impulse);
-            anim.SetTrigger("Wingbeat");
+            Vector2 wingbeatDir;
+            wingbeatDir.x = Input.GetAxisRaw("Horizontal");
+            wingbeatDir.y = Input.GetAxisRaw("Vertical");
+
+            //Move character
+            rb.AddForce(wingbeatDir * jumpVelocity, ForceMode2D.Impulse);
+
+            //Throw feather
+            //- Get the rotation
+            float wingbeatRot;
+            wingbeatRot = Mathf.Atan2(wingbeatDir.x, wingbeatDir.y);
+            if (wingbeatRot < 0) { wingbeatRot = 2 * Mathf.PI - wingbeatRot; }
+            //- Instanciate
+            GameObject throwFeather;
+            throwFeather = Instantiate(attackFeather, new Vector3(transform.position.x, transform.position.y + 1, transform.position.z), Quaternion.Euler(new Vector3(0, 0, wingbeatRot * 180 / 2 * Mathf.PI)));//+ 1 = Right now it comes out of the center of the player
+            throwFeather.GetComponent<AttackFeatherMov>().translationVec = new Vector3(-wingbeatDir.x, -wingbeatDir.y, 0);
+            //- Deactivate one feather on the wing
             featherCtr.activeFeathers--;
             featherCtr.ChangeFeatherText();
+            if (featherCtr.activeFeathers < 1) { Die(); }
+
+            //Animation
+            anim.SetTrigger("Wingbeat");
+           
             wingbeatRequest = false;
         }
 
@@ -99,5 +122,11 @@ public class CharacterMovement : MonoBehaviour
     Vector2 Transform2D()
     {
         return new Vector2(transform.position.x, transform.position.y);
+    }
+
+    void Die()
+    {
+        alive = false;
+        uiManager.ActivateLostUI();
     }
 }
