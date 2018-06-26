@@ -13,7 +13,10 @@ public class CharacterMovement : MonoBehaviour
     private Animator anim;
     bool grounded = true;
     private FeatherController featherCtr;
-    bool jumpRequest = false;
+    bool wingbeatRequest = false;
+
+    private float lowGrav = 0.25f;
+    private float normalGrav = 1.0f;
 
     void Start()
     {
@@ -29,25 +32,44 @@ public class CharacterMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        Move();
-        Jump();
-
-        CheckGrounded();
+        Wingbeat();
+        SetAnimations();
     }
 
     void JumpInput()
     {
         if (Input.GetButtonDown("Jump") && featherCtr.activeFeathers > 0)
         {
-            jumpRequest = true;
+            wingbeatRequest = true;
         }
     }
 
-    void Move()
+    void Wingbeat()
     {
-        //rb.AddForce( new Vector2(Input.GetAxisRaw("Horizontal") * moveSpeed, 0));
-        //rb.velocity = new Vector2(moveSpeed * Input.GetAxis("Horizontal"), rb.velocity.y);
-        
+        if (wingbeatRequest)
+        {
+            //Reset velocity
+            //rb.velocity = Vector2.zero;
+            rb.AddForce(new Vector2(Input.GetAxisRaw("Horizontal") * jumpVelocity, Input.GetAxisRaw("Vertical") * jumpVelocity) , ForceMode2D.Impulse);
+            anim.SetTrigger("Wingbeat");
+            featherCtr.activeFeathers--;
+            featherCtr.ChangeFeatherText();
+            wingbeatRequest = false;
+        }
+
+        if (rb.velocity.y < 0 && Input.GetButton("Jump"))
+        {
+            //If the player is still holding the button fall down slowly
+            rb.gravityScale = lowGrav;
+        }
+        else
+        {
+            rb.gravityScale = normalGrav;
+        }
+    }
+
+    void SetAnimations()
+    {
         //Flip sprite and control animations
         if (rb.velocity.x != 0)
         {
@@ -62,27 +84,12 @@ public class CharacterMovement : MonoBehaviour
                 if (transform.localScale.x != -1) { transform.localScale = new Vector3(-1, 1, 1); }
             }
         }
+
         else
         {
             anim.SetBool("IsMoving", false);
         }
-    }
 
-    void Jump()
-    {
-        if (jumpRequest)
-        {
-            //rb.velocity += new Vector2(Input.GetAxis("Horizontal") * jumpVelocity, Input.GetAxis("Vertical") * jumpVelocity);
-            rb.AddForce(new Vector2(Input.GetAxisRaw("Horizontal") * jumpVelocity, Input.GetAxisRaw("Vertical") * jumpVelocity) , ForceMode2D.Impulse);
-            anim.SetTrigger("Wingbeat");
-            featherCtr.activeFeathers--;
-            featherCtr.ChangeFeatherText();
-            jumpRequest = false;
-        }
-    }
-
-    void CheckGrounded()
-    {
         Vector2 transform2D = Transform2D();
         anim.SetBool("IsGrounded", Physics2D.Linecast(transform2D, transform2D + new Vector2(0, -groundedDist), Jumpable));
 
