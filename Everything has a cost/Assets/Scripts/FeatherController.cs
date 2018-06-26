@@ -18,18 +18,28 @@ public class FeatherController : MonoBehaviour {
     public Text featherText;
 
     private FeatherState[] feathersState;
+
     private int featherRows = 6;
     private int[] feathersInEachRow = new int[6];//6 = featherRows
-    private float radius;
-    private float maxAngle = 150 * Mathf.PI / 180;//The angle at which the body of the bird starts
-    private int maxFeathers = 70;
 
-    //Control both wings on the same script
+    private float radius;
+    private float startRadius = 0.25f;
+
+    private float LcurrentAngle;
+    private float LmaxAngle = 150 * Mathf.PI / 180;//The angle at which the body of the bird starts
+    private float LstartAngle;
+    private float LendAngle;
+    private float LfeatherSeparation;
+
+    private float RcurrentAngle;
+    private float RmaxAngle = -160 * Mathf.PI / 180;//The angle at which the body of the bird starts
+    private float RstartAngle;
+    private float RendAngle;
+    private float RfeatherSeparation;
+
     private int featherNum;
-    private float currentAngle;
-    private float featherSeparation;
-    private float endAngle;
-    private float startAngle;
+    private int maxFeathers = 70;    
+    
     [HideInInspector] public int activeFeathers = 70;
 
     void Start ()
@@ -40,56 +50,86 @@ public class FeatherController : MonoBehaviour {
         feathersInEachRow[3] =  9;
         feathersInEachRow[4] = 11;
         feathersInEachRow[5] = 13;//35 feathers on each wing, 70 total
+
+        //Set the sorting layer (behind the body or above it)
+        for (int i = 0; i < 70; i +=2)//Even
+        {
+            feathers[i].GetComponent<SpriteRenderer>().sortingOrder = 18;
+        }
+
+        for (int i = 1; i < 70; i +=2)//Odd
+        {
+            feathers[i].GetComponent<SpriteRenderer>().sortingOrder =  2;
+        }
     }
 
 	void Update ()
     {
-        LeftWing();
-        RightWing();
+        PositionFeathers();
     }
 
-    private void LeftWing()
+    //IDEAL TO DO: Find a more controlled way to position the feathers (not have to check featherNum < maxFeathers every time)
+    void PositionFeathers()
     {
         featherNum = 0;
-        radius = 0.25f;
-        currentAngle = LWing.transform.rotation.z * Mathf.PI / 180;
+        radius = startRadius;
 
-        //Set the start and end angle
-        if (currentAngle < maxAngle)
+        //Set the start and end angle for the left wing
+        LcurrentAngle = LWing.transform.rotation.z * Mathf.PI / 180;
+        if (LcurrentAngle < LmaxAngle)
         {
-            startAngle = currentAngle;
-            endAngle = maxAngle;
+            LstartAngle = LcurrentAngle;
+            LendAngle = LmaxAngle;
         }
         else
         {
-            startAngle = maxAngle;
-            endAngle = currentAngle;
+            LstartAngle = LmaxAngle;
+            LendAngle = LcurrentAngle;
+        }
+
+        //Set the start and end angle for the right wing
+        RcurrentAngle = RWing.transform.rotation.z * Mathf.PI / 180;
+        if (RcurrentAngle < LmaxAngle)
+        {
+            RstartAngle = RcurrentAngle;
+            RendAngle = RmaxAngle;
+        }
+        else
+        {
+            RstartAngle = RmaxAngle;
+            RendAngle = RcurrentAngle;
         }
 
         //Position the feathers on the left wing
         for (int row = 0; row < featherRows; ++row)
         {
-            featherSeparation = (endAngle - startAngle) / (feathersInEachRow[row] + 1);
+            LfeatherSeparation = (LendAngle - LstartAngle) / (feathersInEachRow[row] + 1);
+            RfeatherSeparation = (RendAngle - RstartAngle) / (feathersInEachRow[row] + 1);
 
             for (int rowFeather = 0; rowFeather < feathersInEachRow[row]; ++rowFeather)
             {
-                if (feathers[featherNum].activeSelf == true)
+                //L wing feather
+                if (featherNum < maxFeathers && feathers[featherNum].activeSelf)
                 {
-
                     feathers[featherNum].transform.position = new Vector3(
-                        radius * Mathf.Cos(Mathf.PI + featherSeparation * (rowFeather + 1)) + LWing.transform.position.x,//Mathf.PI = We need to invert the rotation (probably because Anima 2D is messing with the transforms)
-                        radius * Mathf.Sin(Mathf.PI + featherSeparation * (rowFeather + 1)) + LWing.transform.position.y,
+                        radius * Mathf.Cos(Mathf.PI + LfeatherSeparation * (rowFeather + 1)) + LWing.transform.position.x,//Mathf.PI = We need to invert the rotation (probably because Anima 2D is messing with the transforms)
+                        radius * Mathf.Sin(Mathf.PI + LfeatherSeparation * (rowFeather + 1)) + LWing.transform.position.y + 0.2f,
+                        feathers[featherNum].transform.position.z);
+                }
+                ++featherNum;
+
+                //R wing feather
+                if (featherNum < maxFeathers && feathers[featherNum].activeSelf)
+                {
+                    feathers[featherNum].transform.position = new Vector3(
+                        radius * Mathf.Cos(RfeatherSeparation * (rowFeather + 1)) + RWing.transform.position.x,
+                        radius * Mathf.Sin(RfeatherSeparation * (rowFeather + 1)) + RWing.transform.position.y,
                         feathers[featherNum].transform.position.z);
                 }
                 ++featherNum;
             }
             radius += 0.25f;
         }
-    }
-
-    private void RightWing()
-    {
-
     }
 
     public void ChangeFeatherText()//Called when we throw a feather
@@ -103,6 +143,11 @@ public class FeatherController : MonoBehaviour {
         {
             //activeFeathers++
         }
+    }
+
+    public void HideFeather(int featherIndex)
+    {
+        feathers[featherIndex].SetActive(false);
     }
 }
 //When picking up it checks rows from each wing first

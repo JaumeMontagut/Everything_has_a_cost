@@ -69,6 +69,7 @@ public class CharacterMovement : MonoBehaviour
             throwFeather = Instantiate(attackFeather, new Vector3(transform.position.x, transform.position.y + 1, transform.position.z), Quaternion.Euler(new Vector3(0, 0, wingbeatRot * 180 / 2 * Mathf.PI)));//+ 1 = Right now it comes out of the center of the player
             throwFeather.GetComponent<AttackFeatherMov>().translationVec = new Vector3(-wingbeatDir.x, -wingbeatDir.y, 0);
             //- Deactivate one feather on the wing
+            featherCtr.HideFeather(featherCtr.activeFeathers - 1);
             featherCtr.activeFeathers--;
             featherCtr.ChangeFeatherText();
             if (featherCtr.activeFeathers < 1) { Die(); }
