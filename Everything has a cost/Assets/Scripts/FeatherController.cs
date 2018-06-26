@@ -16,6 +16,7 @@ public class FeatherController : MonoBehaviour {
     public Transform RWing;
     public GameObject[] feathers;
     public Text featherText;
+    public UIManager uiManager;
 
     private FeatherState[] feathersState;
 
@@ -40,7 +41,7 @@ public class FeatherController : MonoBehaviour {
     private int featherNum;
     private int maxFeathers = 70;    
     
-    [HideInInspector] public int activeFeathers = 70;
+    [HideInInspector] public int activeFeathers = 70;//The number of feathers currently active
 
     void Start ()
     {
@@ -132,11 +133,6 @@ public class FeatherController : MonoBehaviour {
         }
     }
 
-    public void ChangeFeatherText()//Called when we throw a feather
-    {
-        featherText.text = "Feathers: " + activeFeathers;
-    }
-
     public void AddFeather()
     {
         if (activeFeathers < maxFeathers)
@@ -149,5 +145,15 @@ public class FeatherController : MonoBehaviour {
     {
         feathers[featherIndex].SetActive(false);
     }
+
+    public void AddFeather(Color featherColor)
+    {
+        if (activeFeathers <= 70)
+        {
+            feathers[activeFeathers - 1].GetComponent<SpriteRenderer>().color = featherColor;
+            feathers[activeFeathers - 1].SetActive(true);
+            activeFeathers++;
+            uiManager.ChangeFeatherText();
+        }
+    }
 }
-//When picking up it checks rows from each wing first

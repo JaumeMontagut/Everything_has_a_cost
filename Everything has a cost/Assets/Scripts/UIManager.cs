@@ -83,4 +83,9 @@ public class UIManager : MonoBehaviour {
         scoreText.rectTransform.position = new Vector3(300, -220, 0);//Set to the center of the screen
         stage = gameStage.lost;
     }
+
+    public void ChangeFeatherText()//Called when we throw a feather
+    {
+        feathersText.text = "Feathers: " + player.GetComponent<FeatherController>().activeFeathers;
+    }
 }

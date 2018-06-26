@@ -71,7 +71,7 @@ public class CharacterMovement : MonoBehaviour
             //- Deactivate one feather on the wing
             featherCtr.HideFeather(featherCtr.activeFeathers - 1);
             featherCtr.activeFeathers--;
-            featherCtr.ChangeFeatherText();
+            uiManager.ChangeFeatherText();
             if (featherCtr.activeFeathers < 1) { Die(); }
 
             //Animation
@@ -128,5 +128,13 @@ public class CharacterMovement : MonoBehaviour
     {
         alive = false;
         uiManager.ActivateLostUI();
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            Die();
+        }
     }
 }
