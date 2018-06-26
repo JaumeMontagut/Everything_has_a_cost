@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BasicEnemy : MonoBehaviour
 {
+    public GameObject pickUpFeather;
+
     private Vector3[] patrolPoints;//The different points the enemy will patrol to
     private int targetPoint;
 
@@ -45,4 +47,20 @@ public class BasicEnemy : MonoBehaviour
             }
         }
 	}
+
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.gameObject.CompareTag("PlayerProjectile"))
+        {
+            Destroy(col.gameObject);
+            Vector3 distanceBetweenFeathers = new Vector3 (0.2f, 0, 0);
+            Vector3 initPos = transform.position - distanceBetweenFeathers * 5;
+            for(int i = 0; i < 10; i++)
+            {
+                Instantiate(pickUpFeather, initPos + distanceBetweenFeathers * i, Quaternion.identity);
+                //Get the sprite renderer and change the feather color
+            }
+            Destroy(this.gameObject);
+        }
+    }
 }

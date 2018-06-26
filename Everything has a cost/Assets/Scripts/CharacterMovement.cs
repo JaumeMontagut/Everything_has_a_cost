@@ -50,7 +50,6 @@ public class CharacterMovement : MonoBehaviour
 
     void Wingbeat()
     {
-        Debug.Log("Alive: " + alive);
         if (wingbeatRequest)
         {
             Vector2 wingbeatDir;
