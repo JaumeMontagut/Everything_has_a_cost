@@ -10,6 +10,7 @@ public class UIManager : MonoBehaviour {
     {
         start,
         playing,
+        win,
         lost
     };
 
@@ -22,6 +23,9 @@ public class UIManager : MonoBehaviour {
     public Text scoreText;
     public Text feathersText;
     private int maximumHeight;
+
+    //Win text
+    public Text winText;
 
     // Game over text
     public Text gameOverText;
@@ -40,7 +44,11 @@ public class UIManager : MonoBehaviour {
             case gameStage.playing:
                 GameText();
                 break;
+            case gameStage.win:
+                PlayAgain();
+                break;
             case gameStage.lost:
+                PlayAgain();
                 break;
         }
     }
@@ -69,7 +77,7 @@ public class UIManager : MonoBehaviour {
         }
     }
 
-    void LoseText()
+    void PlayAgain()
     {
         if (Input.GetButton("Submit"))
         {
@@ -77,10 +85,19 @@ public class UIManager : MonoBehaviour {
         }
     }
 
+    public void ActivateWinUI()
+    {
+        winText.gameObject.SetActive(true);
+        playAgainText.gameObject.SetActive(true);
+        //scoreText.rectTransform.position = new Vector3(300, -220, 0);//Set to the center of the screen
+        stage = gameStage.win;
+    }
+
     public void ActivateLostUI()
     {
         gameOverText.gameObject.SetActive(true);
-        scoreText.rectTransform.position = new Vector3(300, -220, 0);//Set to the center of the screen
+        playAgainText.gameObject.SetActive(true);
+        //scoreText.rectTransform.position = new Vector3(300, -220, 0);//Set to the center of the screen
         stage = gameStage.lost;
     }
 

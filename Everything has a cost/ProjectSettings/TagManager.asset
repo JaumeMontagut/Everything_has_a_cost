@@ -7,6 +7,7 @@ TagManager:
   - Enemy
   - PlayerProjectile
   - PickUpObject
+  - Ground
   layers:
   - Default
   - TransparentFX

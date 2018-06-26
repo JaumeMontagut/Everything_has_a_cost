@@ -10,4 +10,13 @@ public class AttackFeatherMov : MonoBehaviour {
     {
         transform.Translate(translationVec, Space.World);
 	}
+
+    //Delete when it touches the ground
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            Destroy(this.gameObject);
+        }
+    }
 }
