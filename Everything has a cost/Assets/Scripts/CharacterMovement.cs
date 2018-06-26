@@ -12,11 +12,13 @@ public class CharacterMovement : MonoBehaviour
     private float groundedDist = 1;
     private Animator anim;
     bool grounded = true;
+    private FeatherController featherCtr;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        featherCtr = GetComponent<FeatherController>();
     }
 
     void FixedUpdate()
@@ -29,7 +31,7 @@ public class CharacterMovement : MonoBehaviour
 
     void Move()
     {
-        rb.velocity = new Vector2(moveSpeed * Input.GetAxisRaw("Horizontal"), rb.velocity.y);
+        //rb.velocity = new Vector2(moveSpeed * Input.GetAxisRaw("Horizontal"), rb.velocity.y);
         
         //Flip sprite and control animations
         if (rb.velocity.x != 0)
@@ -53,10 +55,13 @@ public class CharacterMovement : MonoBehaviour
 
     void Jump()
     {
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Jump") && featherCtr.activeFeathers > 0)
         {
-            rb.velocity += new Vector2(0, jumpVelocity);
+            //rb.velocity += new Vector2(0, jumpVelocity);
+            rb.AddForce(new Vector2(Input.GetAxis("Horizontal") * jumpVelocity, Input.GetAxis("Vertical") * jumpVelocity) , ForceMode2D.Impulse);
             anim.SetTrigger("Wingbeat");
+            featherCtr.activeFeathers--;
+            featherCtr.ChangeFeatherText();
         }
     }
 
