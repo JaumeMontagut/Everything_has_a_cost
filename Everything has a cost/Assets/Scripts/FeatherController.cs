@@ -123,7 +123,7 @@ public class FeatherController : MonoBehaviour {
                 {
                     feathers[featherNum].transform.position = new Vector3(
                         radius * Mathf.Cos(RfeatherSeparation * (rowFeather + 1)) + RWing.transform.position.x,
-                        radius * Mathf.Sin(RfeatherSeparation * (rowFeather + 1)) + RWing.transform.position.y,
+                        radius * Mathf.Sin(RfeatherSeparation * (rowFeather + 1)) + RWing.transform.position.y + 0.2f,
                         feathers[featherNum].transform.position.z);
                 }
                 ++featherNum;
