@@ -45,7 +45,8 @@ public class CharacterMovement : MonoBehaviour
 
     void Move()
     {
-        //rb.velocity = new Vector2(moveSpeed * Input.GetAxisRaw("Horizontal"), rb.velocity.y);
+        //rb.AddForce( new Vector2(Input.GetAxisRaw("Horizontal") * moveSpeed, 0));
+        //rb.velocity = new Vector2(moveSpeed * Input.GetAxis("Horizontal"), rb.velocity.y);
         
         //Flip sprite and control animations
         if (rb.velocity.x != 0)
@@ -71,8 +72,8 @@ public class CharacterMovement : MonoBehaviour
     {
         if (jumpRequest)
         {
-            //rb.velocity += new Vector2(0, jumpVelocity);
-            rb.AddForce(new Vector2(Input.GetAxis("Horizontal") * jumpVelocity, Input.GetAxis("Vertical") * jumpVelocity) , ForceMode2D.Impulse);
+            //rb.velocity += new Vector2(Input.GetAxis("Horizontal") * jumpVelocity, Input.GetAxis("Vertical") * jumpVelocity);
+            rb.AddForce(new Vector2(Input.GetAxisRaw("Horizontal") * jumpVelocity, Input.GetAxisRaw("Vertical") * jumpVelocity) , ForceMode2D.Impulse);
             anim.SetTrigger("Wingbeat");
             featherCtr.activeFeathers--;
             featherCtr.ChangeFeatherText();
